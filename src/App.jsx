@@ -132,7 +132,7 @@ function NumInput({ value, onChange, max, suffix, ariaLabel, compact = false }) 
     onChange(Number.isFinite(n) ? clamp(n, 0, max) : 0);
   };
   return (
-    <label className={`inline-flex items-baseline ${compact ? 'ml-1' : 'shrink-0 rounded-full bg-white px-2.5 py-1.5 sm:px-3'}`}>
+    <label className={`inline-flex items-baseline ${compact ? 'ml-1' : 'shrink-0 border-b border-transparent focus-within:border-neutral-900'}`}>
       <input
         type="text"
         inputMode="numeric"
@@ -191,12 +191,12 @@ function CategoryRow({ cat, item, eff, onChange }) {
 
 function SideCard({ sideKey, side, result, onItem }) {
   return (
-    <section className="min-w-0 rounded-[24px] bg-[#EFEEEB] px-3 py-4 sm:rounded-[28px] sm:px-5">
+    <section className="min-w-0">
       <header className="flex items-baseline justify-between pb-1">
         <h2 className="text-base font-semibold text-neutral-900 sm:text-lg">{SIDE_LABEL[sideKey]}</h2>
         <span className="text-sm tabular-nums text-neutral-500">{fmt(result.visitors)}명</span>
       </header>
-      <div className="divide-y divide-[#E2E0DB]">
+      <div className="divide-y divide-neutral-100">
         {CATEGORIES.map((c) => (
           <CategoryRow key={c.key} cat={c} item={side.items[c.key]} eff={result.rows[c.key].eff}
             onChange={(patch) => onItem(c.key, patch)} />
@@ -296,7 +296,7 @@ export default function WeddingGuestCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] text-neutral-900"
+    <div className="min-h-screen bg-white text-neutral-900"
       style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
@@ -308,7 +308,7 @@ export default function WeddingGuestCalculator() {
       <div className="mx-auto max-w-5xl px-3 pb-28 pt-8 sm:px-6 sm:pt-12">
         <h1 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">💒 웨딩홀 보증인원 &amp; 하객수 계산기</h1>
 
-        <div className="mt-8 grid grid-cols-2 gap-2 sm:gap-4">
+        <div className="mt-8 grid grid-cols-2 gap-5 sm:gap-10">
           {['groom', 'bride'].map((k) => (
             <SideCard key={k} sideKey={k} side={state[k]} result={res[k]}
               onItem={(cat, patch) => updateItem(k, cat, patch)} />
@@ -316,17 +316,17 @@ export default function WeddingGuestCalculator() {
         </div>
 
         {/* 공용 옵션 */}
-        <section className="mt-4 space-y-4 rounded-[28px] bg-[#EFEEEB] px-5 py-5">
+        <section className="mt-6 space-y-5 border-t border-neutral-200 pt-6">
           <div>
             <div className="mb-2 text-sm text-neutral-500">예식 시간</div>
-            <div className="grid grid-cols-3 gap-1 rounded-full bg-[#E4E2DD] p-1">
+            <div className="grid grid-cols-3 gap-2">
               {TIMES.map((t) => {
                 const active = state.time === t.key;
                 return (
                   <button key={t.key} type="button" aria-pressed={active}
                     onClick={() => setState((s) => ({ ...s, time: t.key }))}
                     className={`rounded-full px-2 py-2.5 text-[13px] transition sm:text-sm ${
-                      active ? 'bg-white font-semibold text-neutral-900 shadow-sm' : 'text-neutral-500'}`}>
+                      active ? 'border border-neutral-900 bg-neutral-900 font-semibold text-white' : 'border border-neutral-200 text-neutral-500'}`}>
                     {t.label}
                   </button>
                 );
@@ -345,8 +345,8 @@ export default function WeddingGuestCalculator() {
               const checked = state[k].region === 'far';
               return (
                 <label key={k}
-                  className={`flex cursor-pointer select-none items-center gap-2.5 rounded-full px-4 py-3 text-sm transition ${
-                    checked ? 'bg-[#E9DFD2] font-semibold text-neutral-900' : 'bg-white text-neutral-500'}`}>
+                  className={`flex cursor-pointer select-none items-center gap-2.5 py-1 text-sm transition ${
+                    checked ? 'font-semibold text-neutral-900' : 'text-neutral-500'}`}>
                   <input type="checkbox" className="sr-only" checked={checked}
                     onChange={(e) => setState((s) => ({ ...s, [k]: { ...s[k], region: e.target.checked ? 'far' : 'same' } }))} />
                   <span className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border-[1.5px] ${
@@ -361,14 +361,14 @@ export default function WeddingGuestCalculator() {
         </section>
 
         {/* 결과 */}
-        <section ref={dashRef} className="mt-4 scroll-mt-4 rounded-[28px] bg-[#EFEEEB] px-5 py-4">
-          <div className="divide-y divide-[#E2E0DB]">
+        <section ref={dashRef} className="mt-6 scroll-mt-4 border-t border-neutral-200 pt-3">
+          <div className="divide-y divide-neutral-100">
             <Row label="초대" value={fmt(res.invited)} />
             <Row label="예상 하객" value={fmt(res.visitors)} />
             <Row label="식사" value={fmt(res.meals)} />
           </div>
 
-          <div className="mt-3 rounded-[22px] bg-[#E9DFD2] px-5 py-4">
+          <div className="mt-1 border-t border-neutral-900 pt-1">
             <Row label="추천 보증인원" value={fmt(res.guarantee)} strong />
             <div className="flex justify-between text-sm text-neutral-500">
               <span>당일 최대 (+15%)</span>
@@ -377,7 +377,7 @@ export default function WeddingGuestCalculator() {
           </div>
 
           {hasInput && (
-            <p className="mt-3 px-1 text-sm leading-relaxed text-neutral-600">
+            <p className="mt-4 text-sm leading-relaxed text-neutral-600">
               예상 식사 인원은 <b className="text-neutral-900">{fmt(res.meals)}명</b>이니 예식장에서{' '}
               <b className="text-neutral-900">{fmt(res.guarantee)}명</b>으로 계약하는 것을 추천드려요.
               대부분의 예식홀은 본식 2주 전 최종 조율 때 증액 가능해요.
@@ -391,7 +391,7 @@ export default function WeddingGuestCalculator() {
             </button>
             <button type="button" onClick={handleReset}
               className={`rounded-full py-3.5 text-sm font-semibold transition active:scale-[0.98] ${
-                confirmReset ? 'bg-[#E9DFD2] text-neutral-900' : 'bg-white text-neutral-600'}`}>
+                confirmReset ? 'border border-neutral-900 text-neutral-900' : 'border border-neutral-200 text-neutral-600'}`}>
               {confirmReset ? '한 번 더 누르면 초기화' : '초기화'}
             </button>
           </div>
@@ -400,11 +400,11 @@ export default function WeddingGuestCalculator() {
       </div>
 
       {/* 하단 고정 요약 */}
-      <div className={`fixed inset-x-0 bottom-0 z-30 px-4 transition-all duration-300 ${
+      <div className={`fixed inset-x-0 bottom-0 z-30 border-t border-neutral-200 bg-white transition-all duration-300 ${
         dashVisible ? 'pointer-events-none translate-y-full opacity-0' : 'opacity-100'}`}
-        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <button type="button" onClick={() => dashRef.current && dashRef.current.scrollIntoView({ behavior: 'smooth' })}
-          className="mx-auto flex w-full max-w-md items-center justify-center gap-4 rounded-full bg-white px-5 py-3.5 text-sm shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
+          className="mx-auto flex w-full max-w-md items-center justify-center gap-4 px-5 py-4 text-sm">
           <span className="text-neutral-500">식사 <b className="tabular-nums text-neutral-900">{fmt(res.meals)}</b></span>
           <span className="h-4 w-px bg-neutral-200" />
           <span className="text-neutral-500">보증 <b className="tabular-nums text-neutral-900">{fmt(res.guarantee)}</b></span>
